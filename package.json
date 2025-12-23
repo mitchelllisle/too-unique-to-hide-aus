@@ -1,0 +1,25 @@
+{
+  "name": "too-unique-to-hide-aus",
+  "version": "1.0.0",
+  "description": "Privacy Risk Calculator - Australian Edition",
+  "main": "dist/calculator.js",
+  "scripts": {
+    "dev": "observable preview",
+    "build": "observable build",
+    "deploy": "observable deploy",
+    "clean": "rm -rf dist .observablehq/cache",
+    "observable": "observable"
+  },
+  "keywords": [
+    "privacy",
+    "data-protection",
+    "australia",
+    "risk-calculator"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@observablehq/framework": "^1.13.3",
+    "typescript": "^5.3.3"
+  }
+}
