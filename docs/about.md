@@ -4,93 +4,69 @@ title: About
 
 # About This Calculator
 
-This Privacy Risk Calculator demonstrates how easily individuals can be re-identified in "anonymous" datasets using just basic demographic information.
+<div style="color: var(--theme-foreground-muted); max-width: 700px; margin-bottom: 2rem; font-size: 1.125rem;">
+How easily can you be re-identified from "anonymous" data? Even without your name or address, a few basic characteristics can single you out.
+</div>
 
-## How It Works
+## 🎯 How It Works
 
-The calculator uses Australian Bureau of Statistics (ABS) census data to estimate how many people in a given postcode share a specific combination of:
-- Age group
-- Gender
-- Geographic location (postcode)
+We use real Australian Bureau of Statistics (ABS) census data to count how many people share your exact combination of:
+- 📍 **Postcode**
+- 🎂 **Age group**
+- ⚧️ **Gender**
+- 💼 **Occupation** (optional)
 
-The fewer people who share your characteristics, the higher your re-identification risk.
+<div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 1rem; margin: 1.5rem 0; border-radius: 4px; color: #000;">
+<strong>The key insight:</strong> The fewer people who match your profile, the easier it is to identify you—even in datasets that have removed names.
+</div>
 
-## Understanding Risk Levels
+## 🚨 Understanding Your Risk
 
-### Very High Risk (1-10 people)
-You are **highly identifiable**. Anyone with access to the dataset could likely determine your identity with minimal additional information. Your demographic combination is so rare that you stand out significantly.
+<div style="display: grid; gap: 1rem; margin: 1.5rem 0;">
+  <div style="border-left: 4px solid #dc2626; padding: 0.75rem; background: #fef2f2; color: #000;">
+    <strong style="color: #dc2626;">Very High Risk:</strong> Less than 10 people match → You may be easily identified
+  </div>
+  <div style="border-left: 4px solid #ea580c; padding: 0.75rem; background: #fff7ed; color: #000;">
+    <strong style="color: #ea580c;">High Risk:</strong> 10-99 people → One or two extra data points may identify you
+  </div>
+  <div style="border-left: 4px solid #ca8a04; padding: 0.75rem; background: #fefce8; color: #000;">
+    <strong style="color: #ca8a04;">Moderate Risk:</strong> 100-999 people → Some protection, but linkable
+  </div>
+  <div style="border-left: 4px solid #16a34a; padding: 0.75rem; background: #f0fdf4; color: #000;">
+    <strong style="color: #16a34a;">Lower Risk:</strong> 1,000+ people → Better anonymity in this group
+  </div>
+</div>
 
-### High Risk (11-100 people)
-You are **quite identifiable**. With just one or two additional pieces of information (like occupation, education level, or family status), someone could likely narrow down and identify you from this group.
+## ⚠️ Why This Matters
 
-### Moderate Risk (101-1,000 people)
-You have **some privacy protection**, but you're not invisible. If someone were to combine this demographic data with other datasets (such as purchasing habits, location data, or online activity), they could potentially narrow down and identify you.
+Many organizations share "de-identified" data thinking it's safe. But research shows:
 
-### Lower Risk (1,001+ people)
-Your demographic profile is **relatively common**, providing better privacy protection for your basic demographics. However, remember that "anonymous" doesn't mean untraceable. The risk of re-identification increases when combined with other data sources.
+- **🔗 Combinations are unique** - Common attributes become identifying when combined
+- **🔍 Data linkage is easy** - Multiple datasets can be cross-referenced
+- **📊 More data = More risk** - Each additional attribute exponentially increases re-identification
 
-## Why This Matters
+## 🔒 Your Privacy
 
-Many organizations share "de-identified" data believing that removing names and addresses provides adequate privacy protection. However, research has shown that:
+✅ **All calculations happen in your browser**  
+✅ **We never collect, store, or transmit your data**  
+✅ **No cookies, no tracking, no analytics**  
+✅ **Open source** - [View the code on GitHub](https://github.com/mitchelllisle/too-unique-to-hide-aus)
 
-1. **Combinations are unique**: Even common attributes become identifying when combined
-2. **Data linkage is easy**: Multiple datasets can be cross-referenced to narrow down individuals
-3. **More data means more risk**: Each additional data point exponentially increases re-identification risk
+## 📚 Data & Accuracy
 
-## Privacy in Practice
+This tool uses real ABS census data. The ABS applies [confidentiality protections](https://www.abs.gov.au/about/data-services/help/confidentiality) including random adjustments to cell values to protect privacy. This means:
 
-This calculator uses data from major Australian postcodes. In reality:
-- Smaller geographic areas (suburbs, towns) have fewer people and higher risk
-- Additional demographics (occupation, income, education) dramatically increase uniqueness
-- Behavioral data (shopping patterns, location history) can identify individuals even in large populations
+- Small population counts are less precise
+- The same query may produce slightly different results
+- Our risk calculations are **estimates for educational purposes**
 
-## Data Sources
+## 💡 Learn More
 
-This tool uses representative demographic data based on:
-- Australian Bureau of Statistics Census data
-- Population distributions by age and gender
-- Geographic population density
-
-## Data Confidentiality Notice
-
-**Important:** This calculator uses demographic data from the Australian Bureau of Statistics (ABS). The ABS applies perturbation techniques to Census and survey data to protect individual confidentiality. As stated in the [ABS TableBuilder documentation](https://www.abs.gov.au/statistics/microdata-tablebuilder/tablebuilder/confidentiality-and-relative-standard-error):
-
-> "To minimise the risk of identifying individuals in aggregate statistics, a technique has been developed to randomly adjust cell values. Random adjustment of the data, known as perturbation, is considered to be the most satisfactory technique for avoiding the release of identifiable data while maximising the range of information that can be released."
-
-This means:
-- **Cell values are adjusted**: Small random adjustments are made to all non-zero cells, including totals
-- **Small cells are less reliable**: Perturbation has the greatest relative impact on small population counts
-- **Results may vary slightly**: The same query may produce slightly different results due to these confidentiality protections
-
-The risk calculations presented by this tool are **estimates for educational purposes** and should not be considered exact measurements. Real-world re-identification risk depends on many factors beyond basic demographics, including the specific datasets being linked, the sophistication of matching algorithms, and additional available information.
-
-## Built With
-
-This calculator is built using:
-- **Observable Framework** - Reactive data application framework
-- **TypeScript** - Type-safe code
-- **Australian Census Data** - Real demographic distributions
-
-## Privacy Notice
-
-Your information is processed **entirely in your browser** and is never sent to any server. We don't:
-- Collect your inputs
-- Store your data
-- Track your usage
-- Use cookies or analytics
-
-## Learn More
-
-For more information about privacy and data protection in Australia:
-
-- [Office of the Australian Information Commissioner (OAIC)](https://www.oaic.gov.au/)
-- [Australian Privacy Principles (APPs)](https://www.oaic.gov.au/privacy/australian-privacy-principles)
-- [ABS Census Data](https://www.abs.gov.au/census)
-
-## Acknowledgments
-
-This project is inspired by the [Individual Risk Calculator](https://aisp.doc.ic.ac.uk/individual-risk/) created by Imperial College London's Applied and Interpretable Statistics research group.
+- 🇦🇺 [Office of the Australian Information Commissioner](https://www.oaic.gov.au/)
+- 📖 [Australian Privacy Principles](https://www.oaic.gov.au/privacy/australian-privacy-principles)
+- 🌍 [Original research from Imperial College London](https://aisp.doc.ic.ac.uk/individual-risk/)
 
 ---
 
 [← Back to Calculator](/)
+
