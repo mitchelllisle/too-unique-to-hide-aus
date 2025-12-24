@@ -4,7 +4,7 @@ export default {
   description: "Calculate your re-identification risk in anonymous Australian datasets",
   
   // Content directory
-  root: "docs",
+  root: "src",
   
   // Output directory
   output: "dist",

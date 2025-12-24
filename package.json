@@ -8,7 +8,10 @@
     "build": "observable build",
     "deploy": "observable deploy",
     "clean": "rm -rf dist .observablehq/cache",
-    "observable": "observable"
+    "observable": "observable",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "keywords": [
     "privacy",
@@ -20,9 +23,15 @@
   "license": "MIT",
   "devDependencies": {
     "@observablehq/framework": "^1.13.3",
-    "typescript": "^5.3.3"
+    "@vitest/coverage-v8": "^1.6.0",
+    "jsdom": "^24.0.0",
+    "typescript": "^5.3.3",
+    "vitest": "^1.6.0"
   },
   "dependencies": {
-    "d3-dsv": "^3.0.1"
+    "@observablehq/plot": "^0.6.17",
+    "d3": "^7.9.0",
+    "d3-dsv": "^3.0.1",
+    "htl": "^0.3.1"
   }
 }

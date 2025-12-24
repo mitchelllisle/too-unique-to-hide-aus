@@ -3,24 +3,292 @@
 This project is a reactive web application that calculates re-identification risk for individuals in anonymous datasets using Australian demographics.
 
 ## Technology Stack
-- **Observable Framework** - Reactive data application framework
-- **Markdown + JavaScript** - Literate programming approach
-- **TypeScript** - Type-safe configuration
+- **Observable Framework v1.13.3** - Reactive data application framework with dashboard theme
+- **TypeScript** - All components are strongly typed with comprehensive JSDoc documentation
+- **D3.js v7** - Data visualization (installed as dependency, not npm: import)
+- **htl** - HTML template literal library (installed as dependency)
+- **Observable Plot** - Declarative charting library
+- **Vitest** - Testing framework with jsdom for DOM testing
 
 ## Project Structure
-- `docs/` - Observable Framework content (markdown pages)
-- `docs/data/` - Data modules
-- `docs/custom-theme.css` - Custom styling
-- `observablehq.config.ts` - Framework configuration
+```
+too-unique-to-hide-aus/
+├── src/                          # Observable Framework source root
+│   ├── components/               # TypeScript components (reusable modules)
+│   │   ├── types.ts             # Type definitions
+│   │   ├── riskCalculations.ts # Risk logic + tests
+│   │   ├── fingerprintChart.ts # D3 visualization + tests
+│   │   └── uniquenessLadder.ts # Risk indicator + tests
+│   ├── data/                    # Data loaders
+│   │   ├── census.csv.js       # Census data loader
+│   │   └── postcodes.js        # Postcode loader
+│   ├── index.md                 # Main application page
+│   ├── about.md                 # About page
+│   └── custom-theme.css         # Custom styling
+├── data/                         # Raw data files
+│   └── poa-age-sex-occ-filtered.csv (966K rows, 57MB)
+├── observablehq.config.ts       # Framework configuration
+├── vitest.config.ts             # Test configuration
+└── package.json                 # Dependencies
+```
+
+## Component Architecture
+
+### Type Definitions (`types.ts`)
+Comprehensive TypeScript interfaces:
+- `CensusRecord` - Individual census data row
+- `RiskLevel` - Union type: 'none' | 'very-high' | 'high' | 'moderate' | 'low'
+- `RiskResult` - Result of risk calculation
+- `RiskExplanation` - Explanation with title, color, emoji, HTML text
+- `DemographicAttribute` - Single demographic attribute (name, value, count)
+- `FingerprintData` - Complete fingerprint dataset (attributes[], yourCount)
+- `AgeDistribution` - Age bracket distribution data
+
+### Risk Calculations (`riskCalculations.ts`)
+Exports:
+- `calculateRiskLevel(matchingCount: number): RiskLevel` - Risk level from match count
+- `getRiskExplanation(result: RiskResult): RiskExplanation` - HTML explanation
+
+**Risk thresholds:**
+- 0 matches: "none"
+- 1-9: "very-high"
+- 10-99: "high"
+- 100-999: "moderate"
+- 1000+: "low"
+
+### Fingerprint Chart (`fingerprintChart.ts`)
+`createFingerprintChart(data: FingerprintData, width: number): SVGSVGElement`
+
+D3 radial network visualization:
+- Central "You" node (dark blue #1e40af, 35px radius, white text)
+- Attribute nodes positioned radially (14px radius)
+- Color-coded connections by rarity:
+  - Red: < 1,000 matches (very high risk)
+  - Orange: 1,000-5,000 matches (high risk)
+  - Yellow: 5,000-20,000 matches (moderate risk)
+  - Green: 20,000+ matches (low risk)
+- Top-left legend (20, 20) with risk levels
+
+### Uniqueness Ladder (`uniquenessLadder.ts`)
+`createUniquenessLadder(data: FingerprintData | null)`
+
+Inline HTML horizontal ladder showing risk stages:
+- Common (100+) - green
+- Uncommon (10-100) - yellow
+- Rare (1-10) - orange
+- Unique (0-1) - red
+Highlights current stage based on yourCount.
 
 ## Development Guidelines
-- Edit markdown files in `docs/` directory
-- Use reactive JavaScript code blocks for interactivity
-- Follow Observable Framework's reactive patterns
-- Ensure mobile responsiveness
-- Follow Australian privacy standards and terminology
+
+### Code Organization
+- **Keep index.md clean**: Import functionality from TypeScript components rather than inline code
+- **Modular components**: Break reusable visualizations and logic into separate TypeScript files in `src/components/`
+- **Type safety**: All TypeScript code must be properly typed with interfaces and JSDoc comments
+- **Separation of concerns**: Types → Logic → Visualization (separate files for each)
+- **Colocate tests**: Place `.test.ts` files next to source files
+
+### TypeScript Component Patterns
+```typescript
+// Always add comprehensive JSDoc comments
+/**
+ * Calculates the risk level based on matching count.
+ * @param matchingCount - Number of matching records in the dataset
+ * @returns The calculated risk level
+ */
+export function calculateRiskLevel(matchingCount: number): RiskLevel {
+  // implementation
+}
+```
+
+### Imports
+- **NO npm: imports**: Always add packages to `package.json` dependencies and use regular imports
+- **Component imports**: Use `.js` extension even for `.ts` files (Observable compiles them)
+```javascript
+// ✅ Correct
+import {calculateRiskLevel} from "./components/riskCalculations.js";
+import * as d3 from "d3";
+import {html} from "htl";
+
+// ❌ Wrong
+import * as d3 from "npm:d3";
+import {html} from "npm:htl";
+```
+
+### Observable Framework Patterns
+- **Reactive cells**: Use ```js blocks for reactive JavaScript code
+- **Input controls**: Use `Generators.input()` pattern with separate view and value variables
+```javascript
+const postcodeInput = Generators.input(html`<select>...</select>`);
+const postcode = postcodeInput.value; // reactive value
+```
+- **Embedding components**: Use `${}` interpolation within HTML
+```javascript
+${fingerprintData ? resize((width) => createFingerprintChart(fingerprintData, width)) : html`<p>Loading...</p>`}
+```
+- **Responsive charts**: Wrap in `resize()` helper for width-responsive visualizations
+
+### Styling Guidelines
+- **Custom theme**: Edit `src/custom-theme.css` for global styles
+- **Card layouts**: Use grid layouts for two-column card arrangements
+- **Mobile responsiveness**: Ensure all visualizations and layouts work on mobile devices
+- **Australian terminology**: Use AU English spelling (e.g., "colour" not "color" in text)
+
+### Data Handling
+- **Census data**: 966K rows, 57MB CSV file loaded via data loader
+- **Performance**: Use efficient filtering and calculations (user-facing, no server-side processing)
+- **Privacy focus**: Always emphasize educational nature and limitations in explanations
+
+## Making Changes
+
+### Adding New Visualizations
+1. Create a new TypeScript file in `src/components/` (e.g., `myChart.ts`)
+2. Define types in `src/components/types.ts` if needed
+3. Export a function that returns a DOM element (SVG or HTML)
+4. Add comprehensive JSDoc comments
+5. Import and use in `src/index.md` with `${}` interpolation
+6. Create test file `myChart.test.ts` with test cases
+
+### Adding New Dependencies
+1. Add to `package.json` dependencies (not devDependencies unless build-only)
+```bash
+yarn add package-name
+```
+2. Import normally in TypeScript files (no `npm:` prefix)
+3. Run `yarn install` to update lockfile
+
+### Modifying Risk Calculations
+1. Update logic in `src/components/riskCalculations.ts`
+2. Maintain existing function signatures for backward compatibility
+3. Update JSDoc comments if behavior changes
+4. Update tests in `riskCalculations.test.ts`
+5. Run `yarn test` to verify changes
+
+## Testing
+
+### Test Framework
+- **Vitest**: Fast unit test runner with TypeScript support
+- **jsdom**: DOM environment for testing UI components
+- **Coverage**: v8 provider with html/text/json reports
+
+### Test Structure
+Tests are colocated with source files using `.test.ts` naming:
+```
+src/components/
+├── riskCalculations.ts
+├── riskCalculations.test.ts    # 15 tests
+├── fingerprintChart.ts
+├── fingerprintChart.test.ts    # 12 tests
+├── uniquenessLadder.ts
+└── uniquenessLadder.test.ts    # 10 tests
+```
+
+### Running Tests
+```bash
+yarn test              # Run once
+yarn test:watch        # Watch mode (re-runs on file changes)
+yarn test:coverage     # With coverage report
+```
+
+### Writing Tests
+Basic pattern:
+```typescript
+import { describe, it, expect, beforeEach } from 'vitest';
+
+describe('componentName', () => {
+  it('should perform expected behavior', () => {
+    const result = myFunction(input);
+    expect(result).toBe(expected);
+  });
+});
+```
+
+**Testing DOM elements:**
+```typescript
+it('should create an SVG element', () => {
+  const chart = createFingerprintChart(mockData, 600);
+  expect(chart).toBeInstanceOf(SVGSVGElement);
+  expect(chart.tagName).toBe('svg');
+});
+```
+
+**Testing HTML templates:**
+```typescript
+it('should render correct HTML', () => {
+  const element = createComponent(data);
+  const html = element.outerHTML || element.textContent;
+  expect(html).toContain('expected text');
+});
+```
+
+### Test Guidelines
+- Test behavior, not implementation
+- Use descriptive test names
+- Cover edge cases and boundary values
+- Test all risk threshold boundaries
+- Use `beforeEach` for setup
+- Run tests before committing
+
+### Current Coverage
+- **Statements**: 100%
+- **Branches**: 91.89%
+- **Functions**: 100%
+- **Lines**: 100%
+
+## Best Practices from Recent Work
+
+### Component Architecture
+- Each component file has a single, focused responsibility
+- Components are pure functions that return DOM elements
+- All types are defined in `types.ts` and imported where needed
+- No inline styles in TypeScript (use CSS classes or theme CSS)
+
+### Risk Calculation Patterns
+- Thresholds: 0 = none, <10 = very-high, <100 = high, <1000 = moderate, 1000+ = low
+- Always provide detailed explanations for each risk level
+- Color coding: red (very-high), orange (high), yellow (moderate), green (low)
+
+### Visualization Guidelines
+- Fingerprint chart: Center "You" node is dark blue (#1e40af), larger than attributes
+- Legend: Top-left position for readability
+- Lines behind nodes in SVG render order
+- Responsive width using `resize()` helper
+- Uniqueness ladder: Inline HTML, horizontal layout, left-aligned under risk heading
+
+### File Naming
+- Use kebab-case for new markdown files: `new-feature.md`
+- Use camelCase for TypeScript files: `riskCalculations.ts`
+- Use camelCase for test files: `riskCalculations.test.ts`
+- Use lowercase for data files: `census.csv.js`
 
 ## Key Commands
-- `yarn dev` - Start development server
+- `yarn dev` - Start development server (http://127.0.0.1:3000)
 - `yarn build` - Build for production
 - `yarn deploy` - Deploy to Observable hosting
+- `yarn install` - Install/update dependencies
+- `yarn test` - Run test suite
+- `yarn test:watch` - Run tests in watch mode
+- `yarn test:coverage` - Generate coverage report
+
+## Troubleshooting
+
+### TypeScript Lint Errors
+- If you see "Cannot find module" after adding imports, run `yarn install`
+- Observable Framework compiles TypeScript at build time
+- Use `.js` extension in import paths even for `.ts` files
+
+### Styling Not Applying
+- Check `src/custom-theme.css` for conflicting rules
+- Observable Framework has specific CSS selectors for generated elements
+- Use browser dev tools to inspect actual rendered HTML structure
+
+### Data Not Loading
+- Ensure data loaders in `src/data/` return proper format
+- Check that CSV file exists in `data/` directory
+- Monitor browser console for loading errors
+
+### Tests Failing
+- Run `yarn install` to ensure test dependencies are installed
+- Check that mock data matches actual type definitions
+- Use `outerHTML` or `textContent` to inspect HTML template outputs
+- Verify environment is set to 'jsdom' in `vitest.config.ts`

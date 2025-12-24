@@ -11,43 +11,27 @@ yarn install
 yarn dev
 ```
 
-Open http://localhost:3000
+Open http://127.0.0.1:3000
 
-## Build
+## Commands
 
 ```bash
-yarn build  # outputs to dist/
-```
-
-## How It Works
-
-Uses ABS census data to estimate how many people share your demographic profile. The fewer matches, the easier you are to re-identify from supposedly anonymous data.
-
-Risk levels:
-- **Very High (≥10%)**: Highly identifiable
-- **High (1-9.9%)**: Easy to identify with minimal extra data  
-- **Moderate (0.1-0.99%)**: Some anonymity, vulnerable to dataset linking
-- **Lower (<0.1%)**: Better protection, but still not untraceable
-
-## Project Structure
-
-```
-docs/
-  index.md           # Main calculator
-  about.md           # About page
-  data/postcodes.js  # Demographic data
-  custom-theme.css   # Styling
+yarn dev              # Start dev server
+yarn build            # Build for production
+yarn test             # Run tests
+yarn test:coverage    # Test with coverage
 ```
 
 ## Privacy
 
 Everything runs in your browser. No data is sent anywhere.
 
-## Contributing
+## Tech Stack
 
-Add postcodes to `docs/data/postcodes.js` or improve the calculator in `docs/index.md`.
-
-## Credits
+- Observable Framework v1.13.3 (TypeScript reactive framework)
+- D3.js for visualizations
+- Vitest for testing
+- Australian Bureau of Statistics census data
 
 Inspired by Imperial College London's [Individual Risk Calculator](https://aisp.doc.ic.ac.uk/individual-risk/).
 
