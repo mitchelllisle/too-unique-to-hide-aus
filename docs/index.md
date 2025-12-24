@@ -26,18 +26,19 @@ Discover how easily you could be identified from supposedly "anonymous" data. Ev
 </div>
 
 ```js
-const postcodeInput = view(Inputs.text({
+const postcodeInputView = Inputs.text({
   label: "Postcode",
   placeholder: "e.g., 2000",
   pattern: "[0-9]{4}",
   required: true,
   value: "2000",
-  style: "height: 48px; padding: 12px 16px; font-size: 16px; width: 100%; max-width: 400px;"
-}));
+  style: "height: 40px !important; padding: 12px 16px; font-size: 16px; width: 100%;"
+});
+const postcodeInput = Generators.input(postcodeInputView);
 ```
 
 ```js
-const ageGroup = view(Inputs.select([
+const ageGroupView = Inputs.select([
   "0-4 years", "5-9 years", "10-14 years", "15-19 years",
   "20-24 years", "25-29 years", "30-34 years", "35-39 years",
   "40-44 years", "45-49 years", "50-54 years", "55-59 years",
@@ -46,15 +47,17 @@ const ageGroup = view(Inputs.select([
 ], {
   label: "Age Group",
   value: "25-29 years",
-  style: "height: 48px; padding: 12px 16px; font-size: 16px; width: 100%; max-width: 400px;"
-}));
+  style: "height: 40px !important; padding: 12px 16px; font-size: 16px; width: 100%;"
+});
+const ageGroup = Generators.input(ageGroupView);
 ```
 
 ```js
-const gender = view(Inputs.radio(["male", "female"], {
+const genderView = Inputs.radio(["male", "female"], {
   label: "Gender",
   value: "female"
-}));
+});
+const gender = Generators.input(genderView);
 ```
 
 ```js
@@ -63,12 +66,26 @@ const allOccupations = [...new Set(censusData.map(d => d.occ))]
   .filter(occ => occ && occ !== 'OCCUPATION' && occ !== 'Not applicable' && occ !== 'Not stated' && occ !== 'Inadequately described')
   .sort();
 
-const occupation = view(Inputs.select(["Any", ...allOccupations], {
+const occupationView = Inputs.select(["Any", ...allOccupations], {
   label: "Occupation (optional)",
   value: "Any",
-  style: "height: 48px; padding: 12px 16px; font-size: 16px; width: 100%; max-width: 400px;"
-}));
+  style: "height: 40px !important; padding: 12px 16px; font-size: 16px; width: 100%;"
+});
+const occupation = Generators.input(occupationView);
 ```
+
+<div class="grid grid-cols-2">
+  <div class="card">
+    <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">Your Demographics</h2>
+    ${postcodeInputView}
+    ${ageGroupView}
+    ${genderView}
+  </div>
+  <div class="card">
+    <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">Additional Details</h2>
+    ${occupationView}
+  </div>
+</div>
 
 ```js
 // Process census data - filter and aggregate for the selected inputs
@@ -201,9 +218,11 @@ function getRiskExplanation(result) {
             ${result.count === 0 ? 'No match' : `${result.count.toLocaleString()} ${result.count === 1 ? 'person' : 'people'}`} ${riskData.emoji}
           </span>
         </div>
-        <span class="muted" style="font-size: 0.9375rem; line-height: 1.6;">
+        <div style="margin-bottom: 1rem;">
           <b style="color: ${riskData.color}; font-size: 1.125rem;">${riskData.title}</b>
-          <br><br>
+          ${uniquenessLadder}
+        </div>
+        <span class="muted" style="font-size: 0.9375rem; line-height: 1.6;">
           ${riskData.explanation}
         </span>
       `;
@@ -406,6 +425,50 @@ const fingerprintViz = fingerprintData ? resize((width) => {
   
   return svg.node();
 }) : html`<div style="text-align: center; padding: 2rem; color: var(--theme-foreground-muted);">No match found - try different demographic selections</div>`;
+```
+
+```js
+const uniquenessLadder = fingerprintData ? (() => {
+  const stages = [
+    { 
+      threshold: 100, 
+      label: 'Common', 
+      color: '#10b981', 
+      icon: '●'
+    },
+    { 
+      threshold: 10, 
+      label: 'Uncommon', 
+      color: '#f59e0b', 
+      icon: '●'
+    },
+    { 
+      threshold: 1, 
+      label: 'Rare', 
+      color: '#ef4444', 
+      icon: '●'
+    },
+    { 
+      threshold: 0, 
+      label: 'Unique', 
+      color: '#dc2626', 
+      icon: '●'
+    }
+  ];
+  
+  const matchingPeople = fingerprintData.yourCount;
+  const currentStage = stages.find(s => matchingPeople >= s.threshold) || stages[stages.length - 1];
+  
+  return html`<div style="display: flex; gap: 1rem; align-items: center; margin-top: 0.75rem;">
+    ${stages.map(stage => {
+      const isActive = currentStage.label === stage.label;
+      return html`<div style="display: flex; align-items: center; gap: 0.35rem; opacity: ${isActive ? '1' : '0.3'};">
+        <span style="font-size: 12px; color: ${isActive ? stage.color : '#999'};">${stage.icon}</span>
+        <span style="font-size: 12px; color: ${isActive ? 'var(--theme-foreground)' : '#999'}; font-weight: ${isActive ? '600' : '400'};">${stage.label}</span>
+      </div>`;
+    })}
+  </div>`;
+})() : null;
 ```
 
 <div class="grid grid-cols-2">
