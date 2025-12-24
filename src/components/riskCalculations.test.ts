@@ -7,8 +7,8 @@ import { calculateRiskLevel, getRiskExplanation } from './riskCalculations';
 import type { RiskResult } from './types';
 
 describe('calculateRiskLevel', () => {
-  it('should return "none" for 0 matches', () => {
-    expect(calculateRiskLevel(0)).toBe('none');
+  it('should return "very-high" for 0 matches', () => {
+    expect(calculateRiskLevel(0)).toBe('very-high');
   });
 
   it('should return "very-high" for 1-9 matches', () => {
@@ -36,7 +36,7 @@ describe('calculateRiskLevel', () => {
   });
 
   it('should handle boundary values correctly', () => {
-    expect(calculateRiskLevel(0)).toBe('none');
+    expect(calculateRiskLevel(0)).toBe('very-high');
     expect(calculateRiskLevel(1)).toBe('very-high');
     expect(calculateRiskLevel(9)).toBe('very-high');
     expect(calculateRiskLevel(10)).toBe('high');
@@ -55,10 +55,15 @@ describe('getRiskExplanation', () => {
     };
     const explanation = getRiskExplanation(result);
     
-    expect(explanation.title).toBe('No Match Found');
+    expect(explanation.title).toBe('Possible Unique');
     expect(explanation.color).toBe('#64748b');
     expect(explanation.emoji).toBe('❓');
     expect(explanation.explanation).toBeDefined();
+    
+    // Verify explanation text contains "high risk" and "ABS"
+    const explanationText = explanation.explanation.outerHTML || explanation.explanation.textContent;
+    expect(explanationText).toContain('High risk');
+    expect(explanationText).toContain('ABS');
   });
 
   it('should return explanation for "very-high" risk level', () => {
@@ -153,7 +158,7 @@ describe('getRiskExplanation', () => {
 describe('Integration: calculateRiskLevel with getRiskExplanation', () => {
   it('should provide consistent results across both functions', () => {
     const testCases = [
-      { count: 0, expectedLevel: 'none' },
+      { count: 0, expectedLevel: 'very-high' },
       { count: 5, expectedLevel: 'very-high' },
       { count: 50, expectedLevel: 'high' },
       { count: 500, expectedLevel: 'moderate' },
