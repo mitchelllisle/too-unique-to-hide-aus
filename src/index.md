@@ -183,7 +183,22 @@ const uniquenessLadder = createUniquenessLadder(fingerprintData);
 /**
  * Prepare age distribution data for visualization
  */
-const allAgeGroups = [...new Set(censusData.map(d => d.age))].sort();
+const ageGroupOrder = [
+  "0-4 years", "5-9 years", "10-14 years", "15-19 years",
+  "20-24 years", "25-29 years", "30-34 years", "35-39 years",
+  "40-44 years", "45-49 years", "50-54 years", "55-59 years",
+  "60-64 years", "65-69 years", "70-74 years", "75-79 years",
+  "80-84 years", "85 years and over"
+];
+const allAgeGroups = [...new Set(censusData.map(d => d.age))].sort((a, b) => {
+  const indexA = ageGroupOrder.indexOf(a);
+  const indexB = ageGroupOrder.indexOf(b);
+  // Handle age groups not in the order array (shouldn't happen, but be defensive)
+  if (indexA === -1 && indexB === -1) return 0; // both unknown, maintain relative order
+  if (indexA === -1) return 1; // a unknown, move to end
+  if (indexB === -1) return -1; // b unknown, move to end
+  return indexA - indexB;
+});
 const ageDistributionData = allAgeGroups.map(group => {
   const populationForAge = censusData
     .filter(d => d.poa === postcodeInput && d.age === group)
@@ -217,7 +232,6 @@ const ageDistributionData = allAgeGroups.map(group => {
         background: "transparent"
       },
       x: { 
-        label: "Age Group",
         tickRotate: -45,
         labelAnchor: "center"
       },
