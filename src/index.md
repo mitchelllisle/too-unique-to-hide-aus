@@ -232,8 +232,10 @@ const ageDistributionData = allAgeGroups.map(group => {
         background: "transparent"
       },
       x: { 
-        tickRotate: -45,
-        labelAnchor: "center"
+        type: "band",
+        domain: allAgeGroups,
+        label: null,
+        tickRotate: -45
       },
       y: { 
         label: "Population",
