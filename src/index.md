@@ -193,6 +193,9 @@ const ageGroupOrder = [
 const allAgeGroups = [...new Set(censusData.map(d => d.age))].sort((a, b) => {
   const indexA = ageGroupOrder.indexOf(a);
   const indexB = ageGroupOrder.indexOf(b);
+  // Handle age groups not in the order array (shouldn't happen, but be defensive)
+  if (indexA === -1) return 1;
+  if (indexB === -1) return -1;
   return indexA - indexB;
 });
 const ageDistributionData = allAgeGroups.map(group => {
