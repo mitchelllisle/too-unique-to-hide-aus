@@ -55,10 +55,15 @@ describe('getRiskExplanation', () => {
     };
     const explanation = getRiskExplanation(result);
     
-    expect(explanation.title).toBe('No Match Found');
-    expect(explanation.color).toBe('#64748b');
-    expect(explanation.emoji).toBe('❓');
+    expect(explanation.title).toBe('Unique');
+    expect(explanation.color).toBe('#dc2626');
+    expect(explanation.emoji).toBe('🙈');
     expect(explanation.explanation).toBeDefined();
+    
+    // Verify explanation text contains "high risk" and "ABS"
+    const explanationText = explanation.explanation.outerHTML || explanation.explanation.textContent;
+    expect(explanationText).toContain('High risk');
+    expect(explanationText).toContain('ABS');
   });
 
   it('should return explanation for "very-high" risk level', () => {
@@ -153,8 +158,8 @@ describe('getRiskExplanation', () => {
 describe('Integration: calculateRiskLevel with getRiskExplanation', () => {
   it('should provide consistent results across both functions', () => {
     const testCases = [
-      { count: 0, expectedLevel: 'none' },
-      { count: 5, expectedLevel: 'very-high' },
+      { count: 0, expectedLevel: 'none' as RiskLevel },
+      { count: 5, expectedLevel: 'very-high' as RiskLevel },
       { count: 50, expectedLevel: 'high' },
       { count: 500, expectedLevel: 'moderate' },
       { count: 5000, expectedLevel: 'low' },
