@@ -19,7 +19,7 @@ import {html} from "htl";
  * @returns Risk level classification
  */
 export function calculateRiskLevel(matchingCount: number): RiskLevel {
-  if (matchingCount === 0) return 'very-high';
+  if (matchingCount === 0) return 'none';
   if (matchingCount < 10) return 'very-high';
   if (matchingCount < 100) return 'high';
   if (matchingCount < 1000) return 'moderate';
@@ -37,10 +37,10 @@ export function getRiskExplanation(result: RiskResult): RiskExplanation {
   
   const explanations: Record<RiskLevel, RiskExplanation> = {
     'none': {
-      title: 'Possible Unique',
-      color: '#64748b',
-      emoji: '❓',
-      explanation: html`<a href="https://www.abs.gov.au/about/data-services/data-confidentiality-guide/confidentiality-and-census" target="_blank" rel="noopener noreferrer" style="color: var(--theme-color);">High risk:</a> This is hard to tell because of suppression by the ABS.`
+      title: 'Unique',
+      color: '#dc2626',
+      emoji: '🙈',
+      explanation: html`<a href="https://www.abs.gov.au/about/data-services/data-confidentiality-guide/confidentiality-and-census" target="_blank" rel="noopener noreferrer" style="color: var(--theme-color);">High risk:</a> This combination either doesn't exist, or is unique. The ABS suppresses unique records to protect privacy.`
     },
     'very-high': {
       title: 'Very High Risk',

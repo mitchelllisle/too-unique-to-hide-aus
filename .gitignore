@@ -22,5 +22,4 @@ dist/
 .DS_Store
 Thumbs.db
 
-# Large data files (use filtered versions instead)
-data/poa-age-sex-occ.csv
+coverage/
