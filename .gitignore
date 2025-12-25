@@ -11,6 +11,9 @@ dist/
 # TypeScript
 *.tsbuildinfo
 
+# Test coverage
+coverage/
+
 # Editor
 .vscode/
 .idea/
