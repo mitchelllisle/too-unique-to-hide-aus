@@ -32,6 +32,18 @@ function getColorByRarity(count: number): string {
 }
 
 /**
+ * Truncate text to maximum length with ellipsis
+ * 
+ * @param text - Text to truncate
+ * @param maxLength - Maximum length before truncation
+ * @returns Truncated text with ellipsis if needed
+ */
+function truncateText(text: string, maxLength: number = 20): string {
+  if (text.length <= maxLength) return text;
+  return text.substring(0, maxLength) + "...";
+}
+
+/**
  * Create demographic fingerprint visualization
  * 
  * @param data - Fingerprint data with attributes and counts
@@ -121,7 +133,7 @@ export function createFingerprintChart(data: FingerprintData, width: number): SV
       .attr("fill", "var(--theme-foreground)")
       .text(attr.name);
     
-    // Attribute value
+    // Attribute value (truncated to 10 chars)
     svg.append("text")
       .attr("x", textX)
       .attr("y", y + 6)
@@ -129,7 +141,7 @@ export function createFingerprintChart(data: FingerprintData, width: number): SV
       .attr("font-size", "11px")
       .attr("font-weight", "500")
       .attr("fill", "var(--theme-foreground-muted)")
-      .text(attr.value);
+      .text(truncateText(attr.value));
     
     // Count with colored text
     svg.append("text")

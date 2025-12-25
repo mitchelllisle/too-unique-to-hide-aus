@@ -164,7 +164,7 @@ const uniquenessLadder = createUniquenessLadder(fingerprintData);
       return html`
         <div style="text-align: center; padding: 1.5rem; background: ${riskData.color}15; border-radius: 8px; margin-bottom: 1rem;">
           <span class="big" style="color: ${riskData.color}; font-size: 3.5rem; font-weight: 700;">
-            ${result.count === 0 ? 'No match' : `${result.count.toLocaleString()} ${result.count === 1 ? 'person' : 'people'}`} ${riskData.emoji}
+            ${result.count === 0 ? 'Possibly Unique' : `${result.count.toLocaleString()} ${result.count === 1 ? 'person' : 'people'}`} ${riskData.emoji}
           </span>
         </div>
         <div style="margin-bottom: 1rem;">
